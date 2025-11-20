@@ -1,0 +1,22 @@
+databases:
+  - name: oliveedge_db
+    databaseName: oliveedge
+    user: oliveedge
+
+services:
+  - type: web
+    name: oliveedge
+    runtime: python
+    buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate"
+    startCommand: "gunicorn oliveedge.wsgi:application"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.0
+      - key: DATABASE_URL
+        fromDatabase:
+          name: oliveedge_db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: False

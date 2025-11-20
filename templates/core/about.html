@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}About Us - Olive Edge{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <h1>About Olive Edge</h1>
+        
+        <p class="lead">
+            Premium merchandise celebrating the valor and dedication of the Indian Army.
+        </p>
+        
+        <hr>
+        
+        <h3>Our Mission</h3>
+        <p>
+            Olive Edge is dedicated to providing high-quality apparel that honors the brave men and women 
+            of the Indian Armed Forces. Every product is designed with pride and manufactured with care to 
+            ensure maximum comfort and durability.
+        </p>
+        
+        <h3>Why Choose Us?</h3>
+        <ul>
+            <li><strong>Quality Materials:</strong> Premium fabrics that last</li>
+            <li><strong>Authentic Designs:</strong> Respectful and meaningful designs</li>
+            <li><strong>Support Our Forces:</strong> A portion of proceeds supports veteran welfare</li>
+            <li><strong>Fast Shipping:</strong> Quick delivery across India</li>
+        </ul>
+        
+        <h3>Our Products</h3>
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5>T-Shirts</h5>
+                        <p>Comfortable cotton tees with army-inspired designs</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5>Jackets</h5>
+                        <p>Durable jackets built for all weather conditions</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5>Shirts</h5>
+                        <p>Formal and casual shirts with military aesthetics</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <hr class="my-5">
+        
+        <div class="text-center">
+            <h3>Ready to Show Your Pride?</h3>
+            <a href="{% url 'products:list' %}" class="btn btn-success btn-lg mt-3">Shop Now</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block title %}Style Profile - Olive Edge{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0"><i class="fas fa-user-edit"></i> Style Profile</h3>
+                    <p class="mb-0 small">Complete your style profile to get personalized fashion suggestions</p>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <label for="{{ form.height.id_for_label }}" class="form-label fw-bold">
+                                {{ form.height.label }}
+                            </label>
+                            {{ form.height }}
+                            {% if form.height.help_text %}
+                                <small class="form-text text-muted">{{ form.height.help_text }}</small>
+                            {% endif %}
+                            {% if form.height.errors %}
+                                <div class="text-danger">{{ form.height.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="{{ form.skin_tone.id_for_label }}" class="form-label fw-bold">
+                                {{ form.skin_tone.label }}
+                            </label>
+                            {{ form.skin_tone }}
+                            {% if form.skin_tone.errors %}
+                                <div class="text-danger">{{ form.skin_tone.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="{{ form.body_type.id_for_label }}" class="form-label fw-bold">
+                                {{ form.body_type.label }}
+                            </label>
+                            {{ form.body_type }}
+                            {% if form.body_type.errors %}
+                                <div class="text-danger">{{ form.body_type.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">{{ form.favourite_colors.label }}</label>
+                            <div class="row">
+                                {% for choice in form.favourite_colors %}
+                                    <div class="col-md-4 col-sm-6 mb-2">
+                                        <div class="form-check">
+                                            {{ choice.tag }}
+                                            <label class="form-check-label" for="{{ choice.id_for_label }}">
+                                                {{ choice.choice_label }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            {% if form.favourite_colors.help_text %}
+                                <small class="form-text text-muted">{{ form.favourite_colors.help_text }}</small>
+                            {% endif %}
+                            {% if form.favourite_colors.errors %}
+                                <div class="text-danger">{{ form.favourite_colors.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">{{ form.preferred_clothing_types.label }}</label>
+                            <div class="row">
+                                {% for choice in form.preferred_clothing_types %}
+                                    <div class="col-md-4 col-sm-6 mb-2">
+                                        <div class="form-check">
+                                            {{ choice.tag }}
+                                            <label class="form-check-label" for="{{ choice.id_for_label }}">
+                                                {{ choice.choice_label }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            {% if form.preferred_clothing_types.help_text %}
+                                <small class="form-text text-muted">{{ form.preferred_clothing_types.help_text }}</small>
+                            {% endif %}
+                            {% if form.preferred_clothing_types.errors %}
+                                <div class="text-danger">{{ form.preferred_clothing_types.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="{{ form.gender.id_for_label }}" class="form-label fw-bold">
+                                {{ form.gender.label }}
+                            </label>
+                            {{ form.gender }}
+                            {% if form.gender.errors %}
+                                <div class="text-danger">{{ form.gender.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% url 'accounts:profile' %}" class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary">Save Profile</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

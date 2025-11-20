@@ -1,0 +1,168 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Olive Edge - Military Style Clothing{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <!-- Chatbot CSS -->
+    <link rel="stylesheet" href="{% static 'css/chatbot.css' %}">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="{% url 'core:home' %}">
+                <i class="fas fa-shield-alt"></i> OLIVE EDGE
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'core:home' %}">Home</a>
+                    </li>
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'core:chatbot' %}">
+                            <i class="fas fa-robot me-1"></i>Style Assistant
+                        </a>
+                    </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'products:list' %}">All Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'core:about' %}">About</a>
+                    </li>
+                    
+                    
+                    {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user"></i> {{ user.username }}
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'accounts:profile' %}">Profile</a></li>
+                            <li><a class="dropdown-item" href="{% url 'orders:list' %}">Orders</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'accounts:logout' %}">Logout</a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:login' %}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:register' %}">Register</a>
+                    </li>
+                    {% endif %}
+                    
+                    <li class="nav-item">
+                        <a class="nav-link position-relative" href="{% url 'cart:detail' %}">
+                            <i class="fas fa-shopping-cart"></i> Cart
+                            {% if cart_count %}
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                {{ cart_count }}
+                            </span>
+                            {% endif %}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Messages -->
+    {% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main class="py-4">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+   <footer class="bg-dark text-light pt-5 pb-3 mt-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <h5 class="fw-bold"><i class="fas fa-shield-alt"></i> OLIVE EDGE</h5>
+                <p>Premium military-style clothing for the Indian Army personnel and enthusiasts.</p>
+            </div>
+            <div class="col-md-4 mb-4">
+                <h5>Quick Links</h5>
+                <ul class="list-unstyled">
+                    <li><a href="{% url 'core:home' %}" class="text-white text-decoration-none">Home</a></li>
+                    <li><a href="{% url 'products:list' %}" class="text-white text-decoration-none">Products</a></li>
+                    <li><a href="{% url 'core:about' %}" class="text-white text-decoration-none">About Us</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4 mb-4">
+                <h5>Contact Info</h5>
+                <p><i class="fas fa-envelope"></i> info@oliveedge.com</p>
+                <p><i class="fas fa-phone"></i> +91 89557 12839</p>
+                <div class="mt-3">
+                    <a href="#" class="text-white me-3"><i class="fab fa-facebook fa-lg"></i></a>
+                    <a href="#" class="text-white me-3"><i class="fab fa-instagram fa-lg"></i></a>
+                    <a href="#" class="text-white"><i class="fab fa-twitter fa-lg"></i></a>
+                </div>
+            </div>
+        </div>
+        <hr class="bg-secondary">
+        <div class="text-center">
+            <p class="mb-0">&copy; 2025 Olive Edge. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="{% static 'js/main.js' %}"></script>
+    <!-- Style Assistant Chatbot -->
+    {% if user.is_authenticated %}
+    <script src="{% static 'js/chatbot.js' %}"></script>
+    <!-- Inline fallback if chatbot.js fails to load -->
+    <script>
+      // Fallback: ensure functions exist even if chatbot.js fails
+      if (typeof openStyleAssistant === 'undefined') {
+        window.openStyleAssistant = function() {
+          console.error('[Chatbot] chatbot.js not loaded - check static file path');
+          const popup = document.getElementById('style-assistant-popup');
+          if (popup) popup.classList.add('sa-open');
+        };
+      }
+      if (typeof closeStyleAssistant === 'undefined') {
+        window.closeStyleAssistant = function() {
+          const popup = document.getElementById('style-assistant-popup');
+          if (popup) popup.classList.remove('sa-open');
+        };
+      }
+      // Set DEBUG flag if Django DEBUG is True
+      {% if debug %}window.DEBUG = true;{% endif %}
+    </script>
+    {% endif %}
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

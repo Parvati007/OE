@@ -1,0 +1,238 @@
+/* static/css/chatbot.css */
+.style-assistant-root {
+  position: relative;
+  z-index: 999980;
+}
+
+.style-assistant-toggle {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 999990;
+  border: none;
+  background: linear-gradient(135deg, #5d5fe9 0%, #8855ff 100%);
+  color: #fff;
+  border-radius: 999px;
+  padding: 10px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  pointer-events: auto;
+  min-width: 220px;
+  box-shadow: 0 12px 30px rgba(93, 95, 233, 0.35);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.style-assistant-toggle:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 35px rgba(93, 95, 233, 0.45);
+}
+
+.style-assistant-toggle:focus {
+  outline: 3px solid rgba(93, 95, 233, 0.4);
+  outline-offset: 2px;
+}
+
+.sa-icon-circle {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.sa-icon-circle i {
+  color: white;
+}
+
+.sa-popup {
+  position: fixed;
+  right: 24px;
+  bottom: 100px;
+  width: 360px;
+  max-width: calc(100% - 48px);
+  z-index: 999995;
+  transform: translateY(20px) scale(0.97);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.25s ease;
+}
+
+.sa-popup.sa-open {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.sa-card {
+  background: #fff;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(93, 95, 233, 0.12);
+}
+
+.sa-card-header {
+  background: linear-gradient(135deg, #5d5fe9 0%, #7f5dff 40%, #a455ff 100%);
+  padding: 18px 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  color: #fff;
+  gap: 12px;
+}
+
+.sa-eyebrow {
+  letter-spacing: 0.2em;
+  font-size: 11px;
+  opacity: 0.8;
+}
+
+.sa-subtitle {
+  font-size: 13px;
+}
+
+.sa-close {
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sa-card-body {
+  padding: 18px;
+  background: #f8fafc;
+}
+
+.sa-highlight {
+  border-radius: 14px;
+  font-size: 14px;
+  background: #eef5ff;
+  border: 1px solid rgba(93, 95, 233, 0.15);
+}
+
+.sa-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+.sa-action-btn {
+  font-weight: 600;
+  border-radius: 12px !important;
+  padding: 12px 14px !important;
+  background: #fff;
+  border-width: 2px;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  gap: 6px;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.sa-action-btn:hover,
+.sa-action-btn:focus {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 18px rgba(15, 23, 42, 0.08);
+}
+
+.sa-output {
+  border-radius: 14px;
+  border: none;
+  box-shadow: 0 3px 12px rgba(15, 23, 42, 0.08);
+}
+
+.sa-output .card-body {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.sa-loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #475569;
+  font-weight: 600;
+}
+
+.sa-loading::before {
+  content: '';
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 3px solid rgba(93, 95, 233, 0.2);
+  border-top-color: #5d5fe9;
+  animation: sa-spin 0.7s linear infinite;
+}
+
+.sa-error {
+  color: #b91c1c;
+  background: #fee2e2;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.sa-answer strong {
+  display: block;
+  margin-bottom: 6px;
+  color: #1e1b4b;
+}
+
+.sa-answer p {
+  margin: 0;
+  color: #475569;
+}
+
+body.sa-popup-active::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.2);
+  z-index: 999980;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+body.sa-popup-active.sa-backdrop-visible::after {
+  opacity: 1;
+}
+
+@keyframes sa-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 640px) {
+  .style-assistant-toggle {
+    bottom: 16px;
+    right: 16px;
+    width: calc(100% - 32px);
+    justify-content: center;
+  }
+
+  .sa-popup {
+    right: 16px;
+    left: 16px;
+    width: auto;
+  }
+}
+
+/* Page layout styles for dedicated chatbot page */
+.sa-popup-page {
+  width: 100%;
+}
+
+.sa-popup-page .sa-actions-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sa-popup-page .sa-action-btn {
+  width: 100%;
+  margin-bottom: 0 !important;
+}
+

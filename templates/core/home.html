@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="bg-dark text-light py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-3">Olive Edge</h1>
+                <p class="lead mb-4">Premium Military-Style Clothing for Indian Army Personnel</p>
+                <a href="{% url 'products:list' %}" class="btn btn-success btn-lg">Shop Now</a>
+            </div>
+            <div class="col-lg-6 text-center">
+                <i class="fas fa-medal fa-10x text-success opacity-75"></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Shop by Category</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm hover-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-tshirt fa-4x text-primary mb-3"></i>
+                        <h4 class="card-title">T-Shirts</h4>
+                        <p class="card-text text-muted">Comfortable and durable military-style T-shirts</p>
+                        <a href="{% url 'products:list' %}?category=tshirt" class="btn btn-outline-primary">Browse</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm hover-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-vest fa-4x text-success mb-3"></i>
+                        <h4 class="card-title">Jackets</h4>
+                        <p class="card-text text-muted">Premium tactical jackets for all weather</p>
+                        <a href="{% url 'products:list' %}?category=jacket" class="btn btn-outline-success">Browse</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm hover-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-user-tie fa-4x text-danger mb-3"></i>
+                        <h4 class="card-title">Shirts</h4>
+                        <p class="card-text text-muted">Professional military-grade shirts</p>
+                        <a href="{% url 'products:list' %}?category=shirt" class="btn btn-outline-danger">Browse</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Products -->
+<section class="bg-light py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Featured Products</h2>
+        <div class="row g-4">
+            {% for product in featured_products %}
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="height: 250px; object-fit: cover;">
+                    {% else %}
+                    <div class="bg-secondary d-flex align-items-center justify-content-center" style="height: 250px;">
+                        <i class="fas fa-image fa-3x text-white"></i>
+                    </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="card-text text-muted">{{ product.description|truncatewords:15 }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="h5 mb-0 text-success">₹{{ product.price }}</span>
+                            <a href="{% url 'products:detail' product.slug %}" class="btn btn-sm btn-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center">
+                <p class="text-muted">No featured products available.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Why Choose Us -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Why Choose Olive Edge?</h2>
+        <div class="row g-4">
+            <div class="col-md-3 text-center">
+                <i class="fas fa-shield-alt fa-3x text-primary mb-3"></i>
+                <h5>Premium Quality</h5>
+                <p class="text-muted">Military-grade materials and craftsmanship</p>
+            </div>
+            <div class="col-md-3 text-center">
+                <i class="fas fa-shipping-fast fa-3x text-success mb-3"></i>
+                <h5>Fast Delivery</h5>
+                <p class="text-muted">Quick shipping across India</p>
+            </div>
+            <div class="col-md-3 text-center">
+                <i class="fas fa-undo fa-3x text-warning mb-3"></i>
+                <h5>Easy Returns</h5>
+                <p class="text-muted">7-day hassle-free returns</p>
+            </div>
+            <div class="col-md-3 text-center">
+                <i class="fas fa-headset fa-3x text-danger mb-3"></i>
+                <h5>24/7 Support</h5>
+                <p class="text-muted">Always here to help you</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Style Assistant Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 text-center mb-4 mb-lg-0">
+                <i class="fas fa-robot fa-8x text-primary opacity-75"></i>
+            </div>
+            <div class="col-lg-6">
+                <h2 class="display-5 fw-bold mb-3">Style Assistant</h2>
+                <p class="lead mb-4">Get personalized fashion recommendations based on your style profile!</p>
+                <p class="mb-4">Our AI-powered Style Assistant helps you discover:</p>
+                <ul class="list-unstyled mb-4">
+                    <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Colors that suit your skin tone</li>
+                    <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Clothing recommendations for your body type</li>
+                    <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Trending outfit suggestions</li>
+                    <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Perfect color combinations</li>
+                    <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Outfits based on your favorite colors</li>
+                </ul>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'core:chatbot' %}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-robot me-2"></i> Open Style Assistant
+                    </a>
+                    {% if not user.style_profile %}
+                        <p class="text-muted mt-3 small">
+                            <i class="fas fa-info-circle me-1"></i> 
+                            <a href="{% url 'accounts:style_profile' %}">Complete your style profile</a> to get personalized suggestions!
+                        </p>
+                    {% endif %}
+                {% else %}
+                    <a href="{% url 'accounts:login' %}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-sign-in-alt me-2"></i> Login to Use Style Assistant
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

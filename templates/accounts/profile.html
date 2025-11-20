@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile - Olive Edge{% endblock %}
+
+{% block content %}
+<h1>My Profile</h1>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" 
+                     style="width: 100px; height: 100px; font-size: 48px;">
+                    {{ user.username|first|upper }}
+                </div>
+                <h4 class="mt-3">{{ user.username }}</h4>
+                <p class="text-muted">{{ user.email }}</p>
+                
+                <hr>
+                
+                <p class="mb-1"><strong>Member since:</strong></p>
+                <p>{{ user.date_joined|date:"F Y" }}</p>
+                
+                <hr>
+                
+                {% if style_profile %}
+                    <a href="{% url 'accounts:style_profile' %}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-edit"></i> Update Style Profile
+                    </a>
+                {% else %}
+                    <div class="alert alert-warning mb-2">
+                        <small>Complete your style profile to get personalized suggestions!</small>
+                    </div>
+                    <a href="{% url 'accounts:style_profile' %}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus"></i> Create Style Profile
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Recent Orders</h5>
+                <a href="{% url 'orders:list' %}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body">
+                {% if orders %}
+                <div class="list-group">
+                    {% for order in orders %}
+                    <a href="{% url 'orders:detail' order.id %}" class="list-group-item list-group-item-action">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>Order #{{ order.id }}</strong>
+                                <br>
+                                <small class="text-muted">{{ order.created|date:"M d, Y" }}</small>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge 
+                                    {% if order.status == 'delivered' %}bg-success
+                                    {% elif order.status == 'cancelled' %}bg-danger
+                                    {% elif order.status == 'shipped' %}bg-info
+                                    {% else %}bg-warning{% endif %}">
+                                    {{ order.get_status_display }}
+                                </span>
+                                <br>
+                                <strong class="text-success">₹{{ order.get_total_cost }}</strong>
+                            </div>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    No orders yet. <a href="{% url 'products:list' %}">Start shopping!</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

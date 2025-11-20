@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Order Placed - Olive Edge{% endblock %}
+
+{% block content %}
+<div class="text-center">
+    <div class="alert alert-success">
+        <h1>✓ Order Placed Successfully!</h1>
+    </div>
+    
+    <div class="card mx-auto" style="max-width: 600px;">
+        <div class="card-body">
+            <h3>Order #{{ order.id }}</h3>
+            <p class="text-muted">Thank you for your order!</p>
+            
+            <hr>
+            
+            <div class="text-start">
+                <h5>Delivery Address:</h5>
+                <p>
+                    {{ order.first_name }} {{ order.last_name }}<br>
+                    {{ order.address }}<br>
+                    {{ order.city }}, {{ order.state }} - {{ order.postal_code }}<br>
+                    Phone: {{ order.phone }}
+                </p>
+                
+                <h5>Order Items:</h5>
+                <ul class="list-group mb-3">
+                    {% for item in order.items.all %}
+                    <li class="list-group-item d-flex justify-content-between">
+                        <div>
+                            {{ item.product.name }} ({{ item.size }}) x {{ item.quantity }}
+                        </div>
+                        <span>₹{{ item.get_cost }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <div class="d-flex justify-content-between border-top pt-2">
+                    <strong>Total:</strong>
+                    <strong class="text-success">₹{{ order.get_total_cost }}</strong>
+                </div>
+            </div>
+            
+            <hr>
+            
+            <p class="text-muted">
+                <small>We'll send you an email confirmation at {{ order.email }}</small>
+            </p>
+            
+            <div class="mt-4">
+                <a href="{% url 'orders:list' %}" class="btn btn-primary">View All Orders</a>
+                <a href="{% url 'products:list' %}" class="btn btn-outline-secondary">Continue Shopping</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

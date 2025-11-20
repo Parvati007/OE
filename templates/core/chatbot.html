@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Style Assistant - Olive Edge{% endblock %}
+
+{% block extra_css %}
+<style>
+    .chatbot-page-container {
+        min-height: calc(100vh - 200px);
+        padding: 2rem 0;
+    }
+    .chatbot-card {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container chatbot-page-container">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <div class="chatbot-card">
+                <div class="card shadow-lg border-0">
+                    <div class="card-header bg-gradient text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <p class="text-uppercase mb-1 small opacity-75">Virtual Stylist</p>
+                                <h4 class="mb-0">Style Assistant</h4>
+                                <small class="opacity-75">Personalised tips powered by your style profile</small>
+                            </div>
+                            <i class="fas fa-robot fa-2x opacity-50"></i>
+                        </div>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="alert alert-primary d-flex align-items-center gap-2 mb-4">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="mb-0">Tap any question below to get an instant outfit suggestion. Keep your style profile updated for sharper tips.</span>
+                        </div>
+                        
+                        <div id="style-assistant-popup" class="sa-popup-page">
+                            <div class="sa-actions-grid">
+                                <button class="sa-action-btn btn btn-outline-primary w-100 text-start mb-3" data-key="colors">
+                                    <i class="fas fa-palette me-2 text-primary"></i>Which color suits me?
+                                </button>
+                                <button class="sa-action-btn btn btn-outline-success w-100 text-start mb-3" data-key="body">
+                                    <i class="fas fa-user-tie me-2 text-success"></i>What clothes suit my body type?
+                                </button>
+                                <button class="sa-action-btn btn btn-outline-danger w-100 text-start mb-3" data-key="trending">
+                                    <i class="fas fa-fire me-2 text-danger"></i>Suggest trending outfits
+                                </button>
+                                <button class="sa-action-btn btn btn-outline-warning w-100 text-start mb-3" data-key="combinations">
+                                    <i class="fas fa-layer-group me-2 text-warning"></i>Best color combinations
+                                </button>
+                                <button class="sa-action-btn btn btn-outline-dark w-100 text-start mb-3" data-key="favourite">
+                                    <i class="fas fa-heart me-2 text-danger"></i>Outfits using my favourite colors
+                                </button>
+                            </div>
+                            <div id="sa-output" class="sa-output card mt-4">
+                                <div class="card-body text-muted">
+                                    <i class="fas fa-magic me-2"></i>Select a question above to see personalised suggestions.
+                                </div>
+                            </div>
+                        </div>
+
+                        {% if not user.style_profile %}
+                        <div class="alert alert-warning mt-4">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Complete your style profile</strong> to get personalized suggestions!
+                            <a href="{% url 'accounts:style_profile' %}" class="btn btn-sm btn-warning ms-2">Create Profile</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/chatbot.js' %}"></script>
+<script>
+    // Initialize chatbot handlers for page
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('[Chatbot] Page chatbot initialized');
+        
+        // Attach action handlers
+        function attachActionHandlers() {
+            const actionButtons = document.querySelectorAll('.sa-action-btn');
+            actionButtons.forEach(btn => {
+                // Remove existing listeners to prevent duplicates
+                const newBtn = btn.cloneNode(true);
+                btn.parentNode.replaceChild(newBtn, btn);
+                
+                newBtn.addEventListener('click', async function (ev) {
+                    const key = newBtn.dataset.key;
+                    console.log('[Chatbot] Action clicked:', key);
+                    
+                    // Show loading
+                    const out = document.getElementById('sa-output');
+                    if (out) {
+                        out.innerHTML = '<div class="card-body"><div class="spinner-border spinner-border-sm text-primary me-2" role="status"><span class="visually-hidden">Loading...</span></div>Loading suggestions...</div>';
+                    }
+
+                    // Fetch user profile
+                    let profile = null;
+                    try {
+                        let resp = await fetch('/profile/data/', { credentials: 'same-origin' });
+                        if (!resp.ok) {
+                            console.log('[Chatbot] Root endpoint failed, trying accounts path');
+                            resp = await fetch('/accounts/profile/data/', { credentials: 'same-origin' });
+                        }
+                        if (resp.ok) {
+                            const data = await resp.json();
+                            if (data.profile) {
+                                profile = data;
+                            } else if (data.exists) {
+                                profile = {
+                                    profile: {
+                                        height: data.height,
+                                        skin_tone: data.skin_tone,
+                                        body_type: data.body_type,
+                                        favourite_colors: data.favourite_colors || [],
+                                        preferred_clothing_types: data.preferred_clothing_types || []
+                                    }
+                                };
+                            }
+                        } else {
+                            console.log('[Chatbot] Profile endpoint returned non-ok:', resp.status);
+                        }
+                    } catch (err) {
+                        console.log('[Chatbot] Error fetching profile:', err);
+                    }
+
+                    // If no profile, show message
+                    if (!profile || !profile.profile) {
+                        if (out) {
+                            out.innerHTML = '<div class="card-body"><div class="alert alert-warning mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Please complete your style profile to get personalised suggestions. <a href="/accounts/style-profile/" class="alert-link">Create Profile</a></div></div>';
+                        }
+                        return;
+                    }
+
+                    // Generate answer
+                    const answer = generateAnswer(key, profile.profile);
+                    if (out) {
+                        out.innerHTML = `<div class="card-body"><h6 class="text-primary mb-3"><i class="fas fa-lightbulb me-2"></i>${newBtn.innerText.trim()}</h6><p class="mb-0">${answer}</p></div>`;
+                    }
+                });
+            });
+            console.log('[Chatbot] Action handlers attached:', document.querySelectorAll('.sa-action-btn').length);
+        }
+
+        // Simple answer generator
+        function generateAnswer(key, profile) {
+            const skin = (profile.skin_tone || '').toLowerCase();
+            const body = (profile.body_type || '').toLowerCase();
+            const favs = profile.favourite_colors || [];
+
+            const colorMap = {
+                'fair/light': ['pastel blue', 'navy', 'maroon', 'olive'],
+                'wheatish': ['teal', 'brown', 'white', 'mustard'],
+                'dark': ['bright red', 'royal blue', 'gold', 'yellow']
+            };
+            const bodyMap = {
+                'slim': 'Layered outfits, oversized tees and structured jackets work well for you.',
+                'fit': 'Slim-fit shirts, well-tailored chinos, and polo tees will highlight your build.',
+                'fat': 'Choose vertical patterns, darker shades and relaxed fits to balance proportions.'
+            };
+            
+            if (key === 'colors') {
+                const base = colorMap[skin] || ['neutral tones like white, black, navy'];
+                const priority = (favs.length ? favs.join(', ') + ' (your favourites) — try combining with ' + base.slice(0,3).join(', ') : base.join(', '));
+                return `Based on your skin tone (${skin || 'unknown'}) and favourite colors (${favs.join(', ') || 'none'}): ${priority}.`;
+            } else if (key === 'body') {
+                return bodyMap[body] || 'Use balanced proportions, avoid overly tight clothes and choose clothes that fit well.';
+            } else if (key === 'trending') {
+                return 'Trending styles now: oversized tees, cargo pants, denim jackets, neutral-layered looks and white sneakers.';
+            } else if (key === 'combinations') {
+                const fav = favs[0] || 'blue';
+                const combos = {
+                    'black': 'Black + White, Black + Olive, Black + Beige',
+                    'blue': 'Blue + Beige, Blue + White, Blue + Grey',
+                    'red': 'Red + Black, Red + Navy',
+                    'green': 'Green + Brown, Green + Beige'
+                };
+                return combos[fav.toLowerCase()] || `Good combos: ${fav} + White, ${fav} + Beige, Neutral accents.`;
+            } else if (key === 'favourite') {
+                return `Outfits using your favourite colors (${favs.join(', ') || 'none'}): try pairing one favourite color as a statement piece with neutral bottoms and matching accessories.`;
+            }
+            return 'Try filling your profile for better suggestions.';
+        }
+
+        // Attach handlers
+        attachActionHandlers();
+    });
+</script>
+{% endblock %}
+
